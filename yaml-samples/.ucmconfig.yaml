@@ -1,0 +1,18 @@
+active_profile: work
+
+profiles:
+  - name: personal-base
+  - name: personal-proj1
+  - name: personal-proj2
+  - name: work
+
+modules:
+  nodejs:
+    disabled: false
+    requires:
+      -- version
+      -- registry
+
+  git:
+    requires:
+      - user.email

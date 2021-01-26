@@ -1,0 +1,9 @@
+---
+environment_variables:
+  remove:
+    - UCM_HTTP_PROXY
+
+git:
+  user:
+    name: John Doe
+    email: personal.email@example.com

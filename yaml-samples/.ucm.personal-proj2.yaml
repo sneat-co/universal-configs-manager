@@ -1,0 +1,12 @@
+---
+extends: personal-base
+
+environment_variables:
+  set:
+    UCM_TEST: personal2
+
+nodejs:
+  version: 10.23.1
+  registry:
+    id: npm
+

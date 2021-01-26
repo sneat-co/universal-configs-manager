@@ -1,0 +1,15 @@
+---
+environment_variables:
+  set:
+    UCM_TEST: work
+    UCM_HTTP_PROXY: "http://example.com"
+
+nodejs:
+  version: 10.23.1
+  registry:
+    id: yarn
+
+git:
+  user:
+    name: John Doe
+    email: work.email@example.com
