@@ -7,7 +7,7 @@ type modulesCommand struct {
 }
 
 // Execute implements "modulesCommand" command
-func (x *modulesCommand) Execute(args []string) error {
+func (x *modulesCommand) Execute([]string) error {
 	_, _ = fmt.Printf("Modules:\n")
 	return nil
 }

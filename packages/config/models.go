@@ -1,5 +1,7 @@
 package config
 
+import "fmt"
+
 // Ucm holds configuration for what settings are required and what not.
 type Ucm struct {
 	Path          string            `yaml:"-"`
@@ -18,6 +20,13 @@ type ProfileSettings struct {
 	Path string `yaml:"path,omitempty"`
 	URL  string `yaml:"url,omitempty"`
 	ETag string `yaml:"etag,omitempty"`
+}
+
+func (v ProfileSettings) DisplayPath() string {
+	if v.Path != "" {
+		return v.Path
+	}
+	return fmt.Sprintf("~/.ucm.%v.yaml", v.Name)
 }
 
 // ModuleSettings

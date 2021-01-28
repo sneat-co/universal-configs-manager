@@ -18,12 +18,14 @@ func (x *configCommand) Execute([]string) error {
 		return err
 	}
 	if x.Raw {
-		os.Stdout.Write(ucmConfig.Raw)
+		if _, err = os.Stdout.Write(ucmConfig.Raw); err != nil {
+			panic(err)
+		}
 	} else {
 		fmt.Printf("Active profile: %v\n", ucmConfig.ActiveProfile)
 		fmt.Println("Named profiles:")
 		for _, profile := range ucmConfig.Profiles {
-			fmt.Printf("\t%v @ ~/.ucm.%v.yaml\n", profile.Name, profile.Name)
+			fmt.Printf("\t%v @ %v\n", profile.Name, profile.DisplayPath())
 		}
 	}
 	return nil

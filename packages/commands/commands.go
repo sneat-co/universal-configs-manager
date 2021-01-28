@@ -31,7 +31,7 @@ func init() {
 
 	if _, err := Parser.AddCommand("use",
 		"Switch to named configs set",
-		"Switches all configs as defined in a named configs set",
+		"Shortcut for `ucm profiles use` - switches/updates configs as defined in a named configuration profile.",
 		&useCommand{}); err != nil {
 		panic(err)
 	}
@@ -46,12 +46,23 @@ func init() {
 
 func addProfileCommands() {
 	profilesCmd, err := Parser.AddCommand("profiles",
-		"Shows known profiles",
-		"Outputs a list of known configuration profiles",
+		"Manages config profiles",
+		"Manages configuration profiles",
 		&profilesCommand{})
 	if err != nil {
 		panic(err)
 	}
+
+	profilesCmd.SubcommandsOptional = false
+
+	_, err = profilesCmd.AddCommand("list",
+		"Shows known profiles",
+		"Outputs a list of known configuration profiles.",
+		&listProfilesCommand{})
+	if err != nil {
+		panic(err)
+	}
+
 	_, err = profilesCmd.AddCommand("create",
 		"Creates new profile",
 		"Creates either a named configuration profile or writes it to a file.",
@@ -60,10 +71,19 @@ func addProfileCommands() {
 		panic(err)
 	}
 
-	if _, err := profilesCmd.AddCommand("show",
+	_, err = profilesCmd.AddCommand("show",
 		"Shows a configs set",
 		"Shows values defined by a configurations set",
-		&showCommand{}); err != nil {
+		&showCommand{})
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = profilesCmd.AddCommand("use",
+		"Switch to named configs set",
+		"Switches all configs as defined in a named configs set",
+		&useCommand{})
+	if err != nil {
 		panic(err)
 	}
 }
