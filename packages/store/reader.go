@@ -4,8 +4,8 @@ import (
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
-	"ucm/config"
-	"ucm/profiles"
+	"ucm/packages/config"
+	"ucm/packages/profiles"
 )
 
 // ReadFile reads YAML configuration file

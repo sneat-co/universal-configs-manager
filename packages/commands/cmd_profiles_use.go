@@ -3,10 +3,10 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"ucm/files"
-	"ucm/nodejs"
-	"ucm/profiles"
-	"ucm/store"
+	"ucm/packages/files"
+	"ucm/packages/nodejs"
+	"ucm/packages/profiles"
+	"ucm/packages/store"
 )
 
 // useCommand implements "use" command

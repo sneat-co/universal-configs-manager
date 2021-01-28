@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/jessevdk/go-flags"
 	"os"
-	"ucm/commands"
+	"ucm/packages/commands"
 )
 
 func main() {

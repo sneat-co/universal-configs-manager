@@ -3,7 +3,7 @@ package files
 import (
 	"fmt"
 	"strings"
-	"ucm/profiles"
+	"ucm/packages/profiles"
 )
 
 func SwitchHosts(_ *profiles.Hosts) error {

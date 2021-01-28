@@ -37,7 +37,7 @@ Configured [personal]:
     - HTTP_PROXY: (none)
 ```
 
-There is a dedicated page about [available command](commands/README.md).
+There is a dedicated page about [available command](packages/commands/README.md).
 
 ### Pitfalls & known issues
 
