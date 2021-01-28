@@ -4,12 +4,7 @@ The **ucm** utility quickly switches multiple dev configs with a single command.
 
 **Manages**: _hosts file entry, Git config, Node version, Node repository, environment variables, etc._
 
----
-
-[![Go Report Card](https://goreportcard.com/badge/github.com/sneat-team/universal-configs-manager)](https://goreportcard.com/report/github.com/sneat-team/universal-configs-manager)
-![Build](https://github.com/sneat-team/universal-configs-manager/workflows/Build/badge.svg)
-
----
+[![Go Report Card](https://goreportcard.com/badge/github.com/sneat-team/universal-configs-manager)](https://goreportcard.com/report/github.com/sneat-team/universal-configs-manager) ![Build](https://github.com/sneat-team/universal-configs-manager/workflows/Build/badge.svg)
 
 ## 😮 How it works
 If you work on different projects requiring different environment you can change **all** of your settings with a single CLI command.
