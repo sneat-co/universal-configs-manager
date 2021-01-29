@@ -3,7 +3,6 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"path/filepath"
 	"ucm/packages/files"
 	"ucm/packages/nodejs"
 	"ucm/packages/profiles"
@@ -11,43 +10,30 @@ import (
 )
 
 type showCommand struct {
-	Name string   `short:"n" long:"name" description:"Name of configs set"`
-	File []string `short:"f" long:"file" description:"Path to config file"`
+	profilesBaseCommand
+	//Names  string   `short:"n" long:"name" description:"Names of configs set"`
+	//Files []string `short:"f" long:"file" description:"Path to config file"`
 }
 
 // Execute implements "show" command
 func (x *showCommand) Execute(args []string) error {
-	if x.Name == "" && len(x.File) == 0 {
+	if len(x.Names) == 0 && len(x.Files) == 0 {
 		return errors.New("either --name or --file parameter is required with 'use' command")
 	}
-	if x.Name != "" {
-		file, err := store.GetNamedFile(x.Name)
+	profileTargets, err := x.getTargets()
+	if err != nil {
+		return err
+	}
+	for _, profileTarget := range profileTargets { // TODO: process in parallel and show in alphabetical order
+		profile, err := store.ReadProfileFromFile("", profileTarget.path)
 		if err != nil {
 			return err
 		}
-		err, configSet := store.ReadFile(file)
-		if err != nil {
+		if err = showConfigSet("Files: "+profileTarget.path, profile); err != nil {
 			return err
 		}
-		if err = showConfigSet(fmt.Sprintf("Named configs set: %v @ %v", x.Name, file), configSet); err != nil {
-			return err
-		}
-		// TODO: call showConfigSet("Named [%v]")
 	}
-	if len(x.File) > 0 {
-		for _, f := range x.File { // TODO: process in parallel and show in alphabetical order
-			err, configSet := store.ReadFile(f)
-			if err != nil {
-				return err
-			}
-			if f, err = filepath.Abs(f); err != nil {
-				return err
-			}
-			if err = showConfigSet("File: "+f, configSet); err != nil {
-				return err
-			}
-		}
-	}
+
 	if options.Verbose {
 		_, _ = fmt.Printf("Args: %+v\n", args)
 	}

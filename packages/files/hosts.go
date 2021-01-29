@@ -1,13 +1,14 @@
 package files
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"ucm/packages/profiles"
 )
 
 func SwitchHosts(_ *profiles.Hosts) error {
-	return nil
+	return errors.New("not implemented yet")
 }
 
 func ShowHosts(hosts *profiles.Hosts) error {

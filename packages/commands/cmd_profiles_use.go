@@ -11,48 +11,46 @@ import (
 
 // useCommand implements "use" command
 type useCommand struct {
-	Name string   `short:"n" long:"name" description:"Name of configs set"`
-	File []string `short:"f" long:"file" description:"Path to config file"`
+	profilesBaseCommand
+	//Name  string   `short:"n" long:"name" description:"Name of configs set"`
+	//Files []string `short:"f" long:"file" description:"Path to config file"`
 }
 
 // var useCommand useCommand
 
 // Execute implements "use" command
 func (x *useCommand) Execute(args []string) error {
-	if x.Name == "" && len(x.File) == 0 {
+	if len(x.Names) == 0 && len(x.Files) == 0 {
 		return errors.New("either --name or --file parameter is required with 'use' command")
 	}
-	if x.Name != "" {
-		file, err := store.GetNamedFile(x.Name)
+	profileTargets, err := x.getTargets()
+	if err != nil {
+		return err
+	}
+	for _, profileTarget := range profileTargets {
+		profile, err := store.ReadProfileFromFile(profileTarget.name, profileTarget.path)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to read profile from file: %w", err)
 		}
-		err, configSet := store.ReadFile(file)
-		if err != nil {
-			return err
-		}
-		if configSet.NodeJS != nil {
-			if err := nodejs.SwitchVersion(configSet.NodeJS.Version); err != nil {
-				return err
+		if profile.NodeJS != nil {
+			if err := nodejs.SwitchVersion(profile.NodeJS.Version); err != nil {
+				return fmt.Errorf("failed to switch NodeJS versoin: %w", err)
 			}
-			if configSet.NodeJS.Registry != nil {
-				if _, err := nodejs.SetRegistry(configSet.NodeJS.Registry.ID); err != nil {
-					return err
+			if profile.NodeJS.Registry != nil {
+				if _, err := nodejs.SetRegistry(profile.NodeJS.Registry.ID); err != nil {
+					return fmt.Errorf("failed to set NodeJS registry: %w", err)
 				}
 			}
 		}
-		if err = showConfigSet(fmt.Sprintf("\nActivated named configs set: %v @ %v", x.Name, file), configSet); err != nil {
-			return err
+		if err = showConfigSet(fmt.Sprintf("\nActivated named configs set: %v @ %v", profileTarget.name, profileTarget.path), profile); err != nil {
+			return fmt.Errorf("failed to display profile: %w", err)
 		}
-		if err = files.SwitchHosts(configSet.Hosts); err != nil {
-			return err
+		if err = files.SwitchHosts(profile.Hosts); err != nil {
+			return fmt.Errorf("failed to switch hosts: %w", err)
 		}
-		if err = showScriptToChangeEnvVars(configSet.EnvVars); err != nil {
-			return err
+		if err = showScriptToChangeEnvVars(profile.EnvVars); err != nil {
+			return fmt.Errorf("failed to show script for changing environment variables: %w", err)
 		}
-	}
-	if len(x.File) > 0 {
-		_, _ = fmt.Printf("Configured files: %+v:\n", x.File)
 	}
 	if options.Verbose {
 		_, _ = fmt.Printf("Args: %+v\n", args)

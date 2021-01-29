@@ -1,29 +1,34 @@
 package store
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io"
 	"os"
-	"ucm/packages/config"
 	"ucm/packages/profiles"
 )
 
-// ReadFile reads YAML configuration file
-func ReadFile(name string) (err error, configSet profiles.Profile) {
-	var file *os.File
+// This is for unit tests
+var osOpen = os.Open
 
-	if file, err = os.Open(name); err != nil {
-		return err, configSet
+// ReadProfileFromFile reads YAML configuration profile file
+func ReadProfileFromFile(name, path string) (profile profiles.Profile, err error) {
+	var file *os.File
+	if file, err = osOpen(path); err != nil {
+		if name != "" {
+			err = fmt.Errorf("failed to open file for profle [%v]: %w", name, err)
+		}
+		return profile, err
 	}
+	defer func() {
+		if err := file.Close(); err != nil {
+			panic(fmt.Sprintf("failed to close profile file %v: %v", path, err))
+		}
+	}()
 	return decodeProfile(file)
 }
 
-func decodeProfile(r io.Reader) (err error, configSet profiles.Profile) {
+func decodeProfile(r io.Reader) (profile profiles.Profile, err error) {
 	decoder := yaml.NewDecoder(r)
-	err = decoder.Decode(&configSet)
-	return
-}
-
-func ReadConfig() (ucmConfig config.Ucm, err error) {
-	return
+	return profile, decoder.Decode(&profile)
 }

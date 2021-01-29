@@ -123,7 +123,7 @@ You can install from sources or download binaries.
 ```
 > go get github.com/sneat-team/universal-configs-manager
 > cd universal-configs-manager
-> go install
+> go install cli/ucm/ucm.go
 ```
 
 ### Download binaries
