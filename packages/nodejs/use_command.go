@@ -12,7 +12,6 @@ func SwitchVersion(version string) error {
 	if version == "" {
 		return nil
 	}
-	// TODO: Get current version of Node and do not switch if matching.
 	currentNodeVersion, err := getCurrentNodeVersion()
 	if err != nil {
 		return err
