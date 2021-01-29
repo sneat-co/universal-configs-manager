@@ -136,7 +136,7 @@ Not available yet.
 ## 🏆 Contributions
 Contributors wanted, PRs are welcome.
 
-There is a [roadmap](ROADMAP.md) document that outlines plans & ideas.
+There is a [roadmap](docs/ROADMAP.md) document that outlines plans & ideas.
 
 ### Getting source codes & Building locally
 
