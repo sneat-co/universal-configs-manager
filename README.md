@@ -39,6 +39,7 @@ Configured [personal]:
 
 There is a dedicated page about [available command](packages/commands/README.md).
 
+
 ### Pitfalls & known issues
 
 - **Environment variables** &mdash; Originally it was planned to perform changing of env vars in a shell the UMC has been run.
@@ -47,6 +48,7 @@ There is a dedicated page about [available command](packages/commands/README.md)
   and this seems to be too difficult, dangerous & unstable.
   As an alternative we can output to console a script for setting env vars that user should copy-paste and execute manually.
   This is not ideal but still good enough as information is easily available & quick to use.
+
 
 ## 📦 Supports out of the box
 
@@ -57,6 +59,7 @@ There is a dedicated page about [available command](packages/commands/README.md)
 
 Ideas & contributions are welcome on how to make it expandable.
 
+
 ## 📤 Shared config profiles
 A named configs profile can point to a file in a shared folder or URL.
 This way you can share configuration with your team.
@@ -64,6 +67,7 @@ This way you can share configuration with your team.
  > umc add --url https://example.com/my-team/.ucm.prod.yaml --name work-prod
  > umc add --path //shared_folder/.ucm.test.yaml --name work-test --sync auto
 ```
+
 ### 🔛 Sync options
 - `ask` - ask to update if changed (_default_)
 - `auto` - auto update if changed
@@ -83,6 +87,7 @@ Configured [~/projets/some-project/.universal-configs.yaml]:
     - HTTP_PROXY: http://proxy.work.example.com
 ```
 
+
 ## ⚖️ Compare config differences
 ```
 > ucm diff --file http://example.com/some-company.yaml --name personal
@@ -100,6 +105,7 @@ Compared:
 ╚════════════════════════╧═══════════════════╧═══════════════════╝
 ```
 
+
 ## 💡 Ideas & Suggestions
 If you have an idea on what can be added to UCM please
 start a [discussion](https://github.com/sneat-team/universal-configs-manager/discussions) first
@@ -108,6 +114,7 @@ before opening an issue.
 
 ## 💻 Cross platform: Works on Windows, Linux, MacOS
 Developed in [Go language](https://golang.org/) so it's fast and works on any OS suported by Go.
+
 
 ## 📥 Install & Downloads
 You can install from sources or download binaries.
@@ -125,12 +132,14 @@ Not available yet.
 ### Installing using package managers
 Not available yet.
 
+
 ## 🏆 Contributions
 Contributors wanted, PRs are welcome.
 
 There is a [roadmap](ROADMAP.md) document that outlines plans & ideas.
 
 ### Getting source codes & Building locally
+
 To get source codes:
 ```
 > git clone https://github.com/sneat-team/universal-configs-manager.git
@@ -139,12 +148,14 @@ To get source codes:
 
 To build an executable file run:
 ```
-> go build . 
+> go build cli/ucm/ucm.go 
 ```
-This will generate the `ucm` executable in the current directory (`ucm.exe` on Windows).
+
+This will generate the `ucm` executable in the current directory _(`ucm.exe` on Windows)_.
 
 ### 🤔 Questions at StackOverflow
 Here is a [list of questions](docs/stackoverflow.md) we've asked at [StackOverflow](https://stackoverflow.com/) while developing this little utility.  
+
 
 ## 🤩 Credits
 This project would not be possible without using free & open source.
@@ -155,6 +166,7 @@ This project would not be possible without using free & open source.
 
 - http://github.com/jessevdk/go-flags - command line arguments parser
 - http://github.com/go-git/go-git - for reading Git configuration files
+
 
 ## ✒️ License
 
