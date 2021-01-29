@@ -157,5 +157,6 @@ This project would not be possible without using free & open source.
 - http://github.com/go-git/go-git - for reading Git configuration files
 
 ## ✒️ License
+
 This is free & open source utility
 [licensed](LICENSE) under [Apache License version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
