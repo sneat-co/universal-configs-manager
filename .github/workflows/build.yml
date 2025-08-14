@@ -15,19 +15,19 @@ name: Build
 jobs:
 
   test:
-    strategy:
-      matrix:
-        go-version: [ 1.15.x ]
-        platform: [ ubuntu-latest ]
-
-    runs-on: ${{ matrix.platform }}
+#    strategy:
+#      matrix:
+#        go-version: [ 1.15.x ]
+#        platform: [ ubuntu-latest ]
+#    runs-on: ${{ matrix.platform }}
+    runs-on: ubuntu-latest
 
     steps:
 
       - name: Install Go
         uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
+#        with:
+#          go-version: ${{ matrix.go-version }}
 
       - name: Checkout code
         uses: actions/checkout@v5
