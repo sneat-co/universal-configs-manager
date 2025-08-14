@@ -39,9 +39,7 @@ func getCurrentNodeVersion() (string, error) {
 		_, _ = fmt.Println("")
 		return "", err
 	}
-	if strings.HasPrefix(s, "v") {
-		s = s[1:]
-	}
+	s = strings.TrimPrefix(s, "v")
 	_, _ = fmt.Println(" ", s)
 	return s, nil
 }
