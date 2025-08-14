@@ -2,13 +2,12 @@ package config
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"io"
-	"io/ioutil"
 	"os"
 )
 
-var ErrNotExists = os.ErrNotExist
+//var ErrNotExists = os.ErrNotExist
 
 func Read() (config Ucm, err error) {
 	var path string
@@ -27,7 +26,7 @@ func Read() (config Ucm, err error) {
 }
 
 func decodeConfig(r io.Reader) (config Ucm, err error) {
-	if config.Raw, err = ioutil.ReadAll(r); err != nil {
+	if config.Raw, err = io.ReadAll(r); err != nil {
 		return
 	}
 	err = yaml.Unmarshal(config.Raw, &config)
