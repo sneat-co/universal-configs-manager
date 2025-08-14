@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -17,7 +18,7 @@ func Read() (config Ucm, err error) {
 	}
 	var file *os.File
 	if file, err = os.Open(path); err != nil {
-		if err == os.ErrNotExist {
+		if errors.Is(err, os.ErrNotExist) {
 			err = fmt.Errorf(".ucmconfig.yaml file not found in user's home directory: %w", err)
 		}
 		return
