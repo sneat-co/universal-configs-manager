@@ -1,6 +1,12 @@
 package commands
 
-import "github.com/jessevdk/go-flags"
+import (
+	"github.com/jessevdk/go-flags"
+	"ucm/packages/config"
+)
+
+// readConfig is a seam for unit tests.
+var readConfig = config.Read
 
 // Options define & holds common additional arguments for the UCM application
 type Options struct {

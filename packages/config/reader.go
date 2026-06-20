@@ -10,6 +10,9 @@ import (
 
 //var ErrNotExists = os.ErrNotExist
 
+// This is for unit tests
+var osOpen = os.Open
+
 func Read() (config Ucm, err error) {
 	var path string
 
@@ -17,7 +20,7 @@ func Read() (config Ucm, err error) {
 		return
 	}
 	var file *os.File
-	if file, err = os.Open(path); err != nil {
+	if file, err = osOpen(path); err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			err = fmt.Errorf(".ucmconfig.yaml file not found in user's home directory: %w", err)
 		}

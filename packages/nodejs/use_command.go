@@ -8,6 +8,12 @@ import (
 	"ucm/packages/execute"
 )
 
+// These are seams for unit tests.
+var (
+	execCommand = execute.Command
+	runCmd      = func(cmd *exec.Cmd) error { return cmd.Run() }
+)
+
 func SwitchVersion(version string) error {
 	if version == "" {
 		return nil
@@ -23,7 +29,7 @@ func SwitchVersion(version string) error {
 	_, _ = fmt.Printf("Switching NodeJS version from %v to %v ...\n", currentNodeVersion, version)
 	cmd := exec.Command("nvm", "use", version)
 	var output string
-	if output, err = execute.Command(cmd); err != nil {
+	if output, err = execCommand(cmd); err != nil {
 		return err
 	}
 	_, _ = fmt.Printf("NVM output: %q\n", output)
@@ -33,7 +39,7 @@ func SwitchVersion(version string) error {
 func getCurrentNodeVersion() (string, error) {
 	_, _ = fmt.Print("Getting current NodeJS version...")
 	cmd := exec.Command("node", "--version")
-	s, err := execute.Command(cmd)
+	s, err := execCommand(cmd)
 	s = strings.TrimSpace(s)
 	if err != nil {
 		_, _ = fmt.Println("")
@@ -79,7 +85,7 @@ func callNpmConfigSet(name, value string) (string, error) {
 	cmd := exec.Command("npm", "config", "set", name, value)
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	err := cmd.Run()
+	err := runCmd(cmd)
 	if err != nil {
 		return "", fmt.Errorf("failed to run `npm set config registry`: %w", err)
 	}

@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"os"
-	"ucm/packages/config"
 )
 
 // profilesCommand implements "list" command
@@ -13,7 +12,7 @@ type configCommand struct {
 
 // Execute implements "list" command
 func (x *configCommand) Execute([]string) error {
-	ucmConfig, err := config.Read()
+	ucmConfig, err := readConfig()
 	if err != nil {
 		return err
 	}
