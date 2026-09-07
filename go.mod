@@ -2,7 +2,7 @@ module ucm
 
 go 1.26.0
 
-toolchain go1.27.0
+toolchain go1.27.1
 
 require (
 	github.com/jessevdk/go-flags v1.6.1
