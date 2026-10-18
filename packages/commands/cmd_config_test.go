@@ -7,15 +7,37 @@ import (
 	"ucm/packages/config"
 )
 
+type errWriter struct{}
+
+func (errWriter) Write([]byte) (int, error) {
+	return 0, errors.New("write failed")
+}
+
 func TestConfigCommand_Execute(t *testing.T) {
 	orig := readConfig
-	t.Cleanup(func() { readConfig = orig })
+	origStdout := stdout
+	t.Cleanup(func() {
+		readConfig = orig
+		stdout = origStdout
+	})
 
 	t.Run("returns_error_from_read", func(t *testing.T) {
 		readConfig = func() (config.Ucm, error) { return config.Ucm{}, errors.New("boom") }
 		sut := &configCommand{}
 		if err := sut.Execute(nil); err == nil {
 			t.Fatal("expected error")
+		}
+	})
+
+	t.Run("returns_error_from_stdout_write", func(t *testing.T) {
+		t.Cleanup(func() { stdout = origStdout })
+		readConfig = func() (config.Ucm, error) {
+			return config.Ucm{Raw: []byte("raw")}, nil
+		}
+		stdout = errWriter{}
+		sut := &configCommand{Raw: true}
+		if err := sut.Execute(nil); err == nil {
+			t.Fatal("expected error from stdout write")
 		}
 	})
 

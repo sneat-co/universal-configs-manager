@@ -90,6 +90,11 @@ func TestCallNpmConfigSet(t *testing.T) {
 	origRun := runCmd
 	t.Cleanup(func() { runCmd = origRun })
 
+	t.Run("default_runCmd", func(t *testing.T) {
+		cmd := exec.Command("true")
+		_ = origRun(cmd)
+	})
+
 	t.Run("returns_output_on_success", func(t *testing.T) {
 		runCmd = func(*exec.Cmd) error { return nil }
 		out, err := callNpmConfigSet("registry", `"https://x/"`)

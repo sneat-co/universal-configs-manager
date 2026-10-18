@@ -1,9 +1,27 @@
 package commands
 
 import (
+	"errors"
 	"strings"
 	"testing"
+
+	"github.com/jessevdk/go-flags"
 )
+
+type failCommandAdder struct{}
+
+func (failCommandAdder) AddCommand(string, string, string, interface{}) (*flags.Command, error) {
+	return nil, errors.New("cannot add")
+}
+
+func TestMustAddCommand_Panic(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatal("expected panic from mustAddCommand")
+		}
+	}()
+	mustAddCommand(failCommandAdder{}, "fail", "", "", nil)
+}
 
 func TestModulesCommand_Execute(t *testing.T) {
 	sut := &modulesCommand{}
@@ -39,6 +57,15 @@ func TestCreateProfileCommand_Execute(t *testing.T) {
 	t.Run("succeeds_with_files", func(t *testing.T) {
 		sut := &createProfileCommand{File: []string{"a.yaml"}}
 		if err := sut.Execute([]string{}); err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+	})
+	t.Run("succeeds_with_verbose", func(t *testing.T) {
+		orig := options.Verbose
+		t.Cleanup(func() { options.Verbose = orig })
+		options.Verbose = true
+		sut := &createProfileCommand{Name: "dev"}
+		if err := sut.Execute([]string{"extra"}); err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
 	})

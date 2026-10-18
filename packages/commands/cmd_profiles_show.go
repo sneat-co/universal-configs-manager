@@ -29,9 +29,7 @@ func (x *showCommand) Execute(args []string) error {
 		if err != nil {
 			return err
 		}
-		if err = showConfigSet("Files: "+profileTarget.path, profile); err != nil {
-			return err
-		}
+		showConfigSet("Files: "+profileTarget.path, profile)
 	}
 
 	if options.Verbose {
@@ -40,26 +38,17 @@ func (x *showCommand) Execute(args []string) error {
 	return nil
 }
 
-func showConfigSet(source string, configSet profiles.Profile) error { // TODO: implement colors
+func showConfigSet(source string, configSet profiles.Profile) { // TODO: implement colors
 	_, _ = fmt.Println(source)
-	if err := showEnvVars(configSet.EnvVars); err != nil {
-		return err
-	}
-	if err := showNode(configSet.NodeJS); err != nil {
-		return err
-	}
-	if err := showGit(configSet.Git); err != nil {
-		return err
-	}
-	if err := files.ShowHosts(configSet.Hosts); err != nil {
-		return err
-	}
-	return nil
+	showEnvVars(configSet.EnvVars)
+	showNode(configSet.NodeJS)
+	showGit(configSet.Git)
+	_ = files.ShowHosts(configSet.Hosts)
 }
 
-func showEnvVars(envVars *profiles.EnvVars) error {
+func showEnvVars(envVars *profiles.EnvVars) {
 	if envVars.IsEmpty() {
-		return nil
+		return
 	}
 	_, _ = fmt.Println("\tEnvironment variables:")
 	if len(envVars.Remove) > 0 {
@@ -74,12 +63,11 @@ func showEnvVars(envVars *profiles.EnvVars) error {
 			fmt.Printf("\t\t\t%v: %v\n", name, value)
 		}
 	}
-	return nil
 }
 
-func showNode(node *profiles.NodeJS) error {
+func showNode(node *profiles.NodeJS) {
 	if node == nil {
-		return nil
+		return
 	}
 	_, _ = fmt.Println("\tNodeJS:")
 	if node.Version != "" {
@@ -99,29 +87,21 @@ func showNode(node *profiles.NodeJS) error {
 		}
 		_, _ = fmt.Print("\n")
 	}
-	return nil
 }
 
-func showGit(git *profiles.GitConfig) error {
+func showGit(git *profiles.GitConfig) {
 	if git == nil {
-		return nil
+		return
 	}
 	_, _ = fmt.Println("\tGit:")
-	if err := showGitUser("User", git.User); err != nil {
-		return err
-	}
-	if err := showGitUser("Author", git.Author); err != nil {
-		return err
-	}
-	if err := showGitUser("Committer", git.Committer); err != nil {
-		return err
-	}
-	return nil
+	showGitUser("User", git.User)
+	showGitUser("Author", git.Author)
+	showGitUser("Committer", git.Committer)
 }
 
-func showGitUser(propName string, user *profiles.GitUser) error {
+func showGitUser(propName string, user *profiles.GitUser) {
 	if user == nil {
-		return nil
+		return
 	}
 	_, _ = fmt.Printf("\t\t%v:\n", propName)
 	if user.Name != "" {
@@ -130,5 +110,4 @@ func showGitUser(propName string, user *profiles.GitUser) error {
 	if user.Email != "" {
 		_, _ = fmt.Printf("\t\t\tEmail: %v\n", user.Email)
 	}
-	return nil
 }

@@ -2,8 +2,11 @@ package commands
 
 import (
 	"fmt"
+	"io"
 	"os"
 )
+
+var stdout io.Writer = os.Stdout
 
 // profilesCommand implements "list" command
 type configCommand struct {
@@ -17,8 +20,8 @@ func (x *configCommand) Execute([]string) error {
 		return err
 	}
 	if x.Raw {
-		if _, err = os.Stdout.Write(ucmConfig.Raw); err != nil {
-			panic(err)
+		if _, err = stdout.Write(ucmConfig.Raw); err != nil {
+			return err
 		}
 	} else {
 		fmt.Printf("Active profile: %v\n", ucmConfig.ActiveProfile)
