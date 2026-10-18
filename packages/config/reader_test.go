@@ -6,11 +6,16 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"testing/iotest"
 )
 
 func TestRead(t *testing.T) {
 	orig := osOpen
-	t.Cleanup(func() { osOpen = orig })
+	origHomedir := homedirDir
+	t.Cleanup(func() {
+		osOpen = orig
+		homedirDir = origHomedir
+	})
 
 	t.Run("reads_and_decodes_config", func(t *testing.T) {
 		dir := t.TempDir()
@@ -28,6 +33,15 @@ func TestRead(t *testing.T) {
 		}
 	})
 
+	t.Run("returns_error_when_getPath_fails", func(t *testing.T) {
+		t.Cleanup(func() { homedirDir = origHomedir })
+		homedirDir = func() (string, error) { return "", errors.New("homedir failed") }
+		_, err := Read()
+		if err == nil {
+			t.Fatal("expected error when getPath fails")
+		}
+	})
+
 	t.Run("wraps_not_found_error", func(t *testing.T) {
 		osOpen = func(string) (*os.File, error) { return nil, os.ErrNotExist }
 		_, err := Read()
@@ -39,6 +53,17 @@ func TestRead(t *testing.T) {
 		}
 		if !strings.Contains(err.Error(), ".ucmconfig.yaml") {
 			t.Errorf("expected message to mention config file, got: %v", err)
+		}
+	})
+
+	t.Run("returns_generic_open_error", func(t *testing.T) {
+		osOpen = func(string) (*os.File, error) { return nil, errors.New("permission denied") }
+		_, err := Read()
+		if err == nil {
+			t.Fatal("expected error")
+		}
+		if errors.Is(err, os.ErrNotExist) {
+			t.Errorf("did not expect os.ErrNotExist")
 		}
 	})
 }
@@ -66,6 +91,13 @@ profiles:
 		}
 	})
 
+	t.Run("returns_error_when_read_fails", func(t *testing.T) {
+		_, err := decodeConfig(iotest.ErrReader(errors.New("read failed")))
+		if err == nil {
+			t.Fatal("expected error when reading fails")
+		}
+	})
+
 	t.Run("returns_error_for_invalid_yaml", func(t *testing.T) {
 		_, err := decodeConfig(strings.NewReader("\tnot: : valid"))
 		if err == nil {
@@ -90,11 +122,23 @@ func TestProfileSettings_DisplayPath(t *testing.T) {
 }
 
 func TestGetPath(t *testing.T) {
-	path, err := getPath()
-	if err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if !strings.HasSuffix(path, ".ucmconfig.yaml") {
-		t.Errorf("expected path to end with .ucmconfig.yaml, got %q", path)
-	}
+	t.Run("returns_path_on_success", func(t *testing.T) {
+		path, err := getPath()
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if !strings.HasSuffix(path, ".ucmconfig.yaml") {
+			t.Errorf("expected path to end with .ucmconfig.yaml, got %q", path)
+		}
+	})
+
+	t.Run("returns_error_when_homedir_fails", func(t *testing.T) {
+		orig := homedirDir
+		t.Cleanup(func() { homedirDir = orig })
+		homedirDir = func() (string, error) { return "", errors.New("home error") }
+		_, err := getPath()
+		if err == nil {
+			t.Fatal("expected error when homedir fails")
+		}
+	})
 }

@@ -6,12 +6,17 @@ import (
 	"ucm/packages/commands"
 )
 
+var (
+	parserParse = commands.Parser.Parse
+	osExit      = os.Exit
+)
+
 func main() {
-	if _, err := commands.Parser.Parse(); err != nil {
+	if _, err := parserParse(); err != nil {
 		if flagsErr, ok := err.(*flags.Error); ok && flagsErr.Type == flags.ErrHelp {
-			os.Exit(0)
+			osExit(0)
 		} else {
-			os.Exit(1)
+			osExit(1)
 		}
 	}
 }

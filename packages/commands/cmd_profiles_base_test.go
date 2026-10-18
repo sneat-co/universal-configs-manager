@@ -1,6 +1,7 @@
 package commands
 
 import (
+	"errors"
 	"path/filepath"
 	"testing"
 )
@@ -50,6 +51,28 @@ func TestGetTargets(t *testing.T) {
 		}
 		if len(targets) != 0 {
 			t.Fatalf("expected no targets, got %d", len(targets))
+		}
+	})
+
+	t.Run("returns_error_when_homedir_fails", func(t *testing.T) {
+		orig := homedirDir
+		t.Cleanup(func() { homedirDir = orig })
+		homedirDir = func() (string, error) { return "", errors.New("homedir failed") }
+		c := profilesBaseCommand{Names: []string{"dev"}}
+		_, err := c.getTargets()
+		if err == nil {
+			t.Fatal("expected error when homedir fails")
+		}
+	})
+
+	t.Run("returns_error_when_filepath_abs_fails", func(t *testing.T) {
+		orig := filepathAbs
+		t.Cleanup(func() { filepathAbs = orig })
+		filepathAbs = func(string) (string, error) { return "", errors.New("abs failed") }
+		c := profilesBaseCommand{Files: []string{"file.yaml"}}
+		_, err := c.getTargets()
+		if err == nil {
+			t.Fatal("expected error when filepathAbs fails")
 		}
 	})
 }

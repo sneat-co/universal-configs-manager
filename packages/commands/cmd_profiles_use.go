@@ -9,6 +9,13 @@ import (
 	"ucm/packages/store"
 )
 
+// Seams for unit tests
+var (
+	nodeSwitchVersion = nodejs.SwitchVersion
+	nodeSetRegistry   = nodejs.SetRegistry
+	filesSwitchHosts  = files.SwitchHosts
+)
+
 // useCommand implements "use" command
 type useCommand struct {
 	profilesBaseCommand
@@ -33,24 +40,20 @@ func (x *useCommand) Execute(args []string) error {
 			return fmt.Errorf("failed to read profile from file: %w", err)
 		}
 		if profile.NodeJS != nil {
-			if err := nodejs.SwitchVersion(profile.NodeJS.Version); err != nil {
+			if err := nodeSwitchVersion(profile.NodeJS.Version); err != nil {
 				return fmt.Errorf("failed to switch NodeJS versoin: %w", err)
 			}
 			if profile.NodeJS.Registry != nil {
-				if _, err := nodejs.SetRegistry(profile.NodeJS.Registry.ID); err != nil {
+				if _, err := nodeSetRegistry(profile.NodeJS.Registry.ID); err != nil {
 					return fmt.Errorf("failed to set NodeJS registry: %w", err)
 				}
 			}
 		}
-		if err = showConfigSet(fmt.Sprintf("\nActivated named configs set: %v @ %v", profileTarget.name, profileTarget.path), profile); err != nil {
-			return fmt.Errorf("failed to display profile: %w", err)
-		}
-		if err = files.SwitchHosts(profile.Hosts); err != nil {
+		showConfigSet(fmt.Sprintf("\nActivated named configs set: %v @ %v", profileTarget.name, profileTarget.path), profile)
+		if err = filesSwitchHosts(profile.Hosts); err != nil {
 			return fmt.Errorf("failed to switch hosts: %w", err)
 		}
-		if err = showScriptToChangeEnvVars(profile.EnvVars); err != nil {
-			return fmt.Errorf("failed to show script for changing environment variables: %w", err)
-		}
+		showScriptToChangeEnvVars(profile.EnvVars)
 	}
 	if options.Verbose {
 		_, _ = fmt.Printf("Args: %+v\n", args)
@@ -58,9 +61,9 @@ func (x *useCommand) Execute(args []string) error {
 	return nil
 }
 
-func showScriptToChangeEnvVars(envVars *profiles.EnvVars) error {
-	if envVars == nil || len(envVars.Set) == 0 && len(envVars.Remove) == 0 {
-		return nil
+func showScriptToChangeEnvVars(envVars *profiles.EnvVars) {
+	if envVars == nil || (len(envVars.Set) == 0 && len(envVars.Remove) == 0) {
+		return
 	}
 	_, _ = fmt.Println(`
 ===========================================================
@@ -75,5 +78,4 @@ Execute next in your shell to change environment variables:`)
 	}
 	fmt.Println(`<==== End of shell script ==========
 ===========================================================`)
-	return nil
 }

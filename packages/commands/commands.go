@@ -18,78 +18,67 @@ var options Options
 // Parser holds list of commands and provide a method to parse CLI arguments
 var Parser = flags.NewParser(&options, flags.Default)
 
-func init() {
-	if _, err := Parser.AddCommand("config",
-		"Shows/manages UCM config",
-		"Run `ucm config --raw`` to see raw content of the config file located at ~/.ucmconfig.yaml",
-		&configCommand{}); err != nil {
-		panic(err)
-	}
-
-	if _, err := Parser.AddCommand("modules",
-		"Manages UCM modules",
-		"List, add, removes UCM modules",
-		&modulesCommand{}); err != nil {
-		panic(err)
-	}
-
-	addProfileCommands()
-
-	if _, err := Parser.AddCommand("use",
-		"Switch to named configs set",
-		"Shortcut for `ucm profiles use` - switches/updates configs as defined in a named configuration profile.",
-		&useCommand{}); err != nil {
-		panic(err)
-	}
-
-	if _, err := Parser.AddCommand("create",
-		"Creates a named configs profile or writes it to a file",
-		"Asks for all required values as configured per .ucmconfig.yaml and either creates a new named config or writes to a file.",
-		&createProfileCommand{}); err != nil {
-		panic(err)
-	}
+type commandAdder interface {
+	AddCommand(name, shortDescription, longDescription string, data interface{}) (*flags.Command, error)
 }
 
-func addProfileCommands() {
-	profilesCmd, err := Parser.AddCommand("profiles",
+func mustAddCommand(adder commandAdder, name, short, long string, data interface{}) *flags.Command {
+	cmd, err := adder.AddCommand(name, short, long, data)
+	if err != nil {
+		panic(err)
+	}
+	return cmd
+}
+
+func init() {
+	mustAddCommand(Parser, "config",
+		"Shows/manages UCM config",
+		"Run `ucm config --raw`` to see raw content of the config file located at ~/.ucmconfig.yaml",
+		&configCommand{})
+
+	mustAddCommand(Parser, "modules",
+		"Manages UCM modules",
+		"List, add, removes UCM modules",
+		&modulesCommand{})
+
+	addProfileCommands(Parser)
+
+	mustAddCommand(Parser, "use",
+		"Switch to named configs set",
+		"Shortcut for `ucm profiles use` - switches/updates configs as defined in a named configuration profile.",
+		&useCommand{})
+
+	mustAddCommand(Parser, "create",
+		"Creates a named configs profile or writes it to a file",
+		"Asks for all required values as configured per .ucmconfig.yaml and either creates a new named config or writes to a file.",
+		&createProfileCommand{})
+}
+
+func addProfileCommands(adder commandAdder) {
+	profilesCmd := mustAddCommand(adder, "profiles",
 		"Manages config profiles",
 		"Manages configuration profiles",
 		&profilesCommand{})
-	if err != nil {
-		panic(err)
-	}
 
 	profilesCmd.SubcommandsOptional = false
 
-	_, err = profilesCmd.AddCommand("list",
+	mustAddCommand(profilesCmd, "list",
 		"Shows known profiles",
 		"Outputs a list of known configuration profiles.",
 		&listProfilesCommand{})
-	if err != nil {
-		panic(err)
-	}
 
-	_, err = profilesCmd.AddCommand("create",
+	mustAddCommand(profilesCmd, "create",
 		"Creates new profile",
 		"Creates either a named configuration profile or writes it to a file.",
 		&createProfileCommand{})
-	if err != nil {
-		panic(err)
-	}
 
-	_, err = profilesCmd.AddCommand("show",
+	mustAddCommand(profilesCmd, "show",
 		"Shows a configs set",
 		"Shows values defined by a configurations set",
 		&showCommand{})
-	if err != nil {
-		panic(err)
-	}
 
-	_, err = profilesCmd.AddCommand("use",
+	mustAddCommand(profilesCmd, "use",
 		"Switch to named configs set",
 		"Switches all configs as defined in a named configs set",
 		&useCommand{})
-	if err != nil {
-		panic(err)
-	}
 }

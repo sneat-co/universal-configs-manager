@@ -5,8 +5,10 @@ import (
 	"path/filepath"
 )
 
+var homedirDir = homedir.Dir
+
 func getPath() (string, error) {
-	homeDir, err := homedir.Dir()
+	homeDir, err := homedirDir()
 	if err != nil {
 		return "", err
 	}
